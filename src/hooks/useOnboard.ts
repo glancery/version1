@@ -23,7 +23,7 @@ export default function useOnboard() {
 	const [error, setError] = useState<string | null>(null);
 	const [success, setSuccess] = useState<boolean>(false);
 
-	const API_BASE = (import.meta.env as any).VITE_API_URL || "http://localhost:3000";
+	const API_BASE = (import.meta.env as any).VITE_API_URL || "https://backend.glancery.com";
 
 	async function setPublication(name: string, icode?: string): Promise<OnboardResult> {
 		setLoading(true);

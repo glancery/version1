@@ -30,7 +30,7 @@ export default function useSubscriber() {
 	const sendStats = useCallback(
 		async (
 			payload: StatsPayload,
-			path = "http://localhost:3000/api/v1/glance/stats"
+			path = "https://backend.glancery.com/api/v1/glance/stats"
 		): Promise<SendResult> => {
 			setError(null);
 			setSuccess(false);

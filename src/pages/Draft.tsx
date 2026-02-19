@@ -208,7 +208,7 @@ const Draft = () => {
       if (icode) store.dispatch(setAuthUser(icode));
 
       const API_BASE =
-        (import.meta.env as any).VITE_API_URL || "http://localhost:3000";
+        (import.meta.env as any).VITE_API_URL || "https://backend.glancery.com";
       // Prefer the currently-authenticated icode from the store, but fall
       // back to the route-provided icode when available (useful when
       // previewing a draft link sent by email).
@@ -310,7 +310,7 @@ const Draft = () => {
       : undefined;
 
     const API_BASE =
-      (import.meta.env as any).VITE_API_URL || "http://localhost:3000";
+      (import.meta.env as any).VITE_API_URL || "https://backend.glancery.com";
 
     const form = new FormData();
     form.append("icode", String(icode));

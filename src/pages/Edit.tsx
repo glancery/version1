@@ -248,7 +248,7 @@ const Edit = () => {
       }
       try {
         const API_BASE =
-          (import.meta.env as any).VITE_API_URL || "http://localhost:3000";
+          (import.meta.env as any).VITE_API_URL || "https://backend.glancery.com";
         const res = await fetch(`${API_BASE}/api/v1/glance/get`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },

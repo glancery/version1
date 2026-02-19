@@ -12,7 +12,7 @@ const useSubscribe = () => {
     setSuccess(false);
 
     try {
-      const response = await axios.post("http://localhost:3000/api/v1/glance/subscribe", {
+      const response = await axios.post("https://backend.glancery.com/api/v1/glance/subscribe", {
         gcode,
         emailid,
       });
