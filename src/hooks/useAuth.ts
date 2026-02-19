@@ -14,7 +14,7 @@ export default function useAuth() {
   const [success, setSuccess] = useState<boolean>(false);
   const dispatch = useDispatch();
 
-  const API_BASE = (import.meta.env as any).VITE_API_URL || "http://localhost:3000";
+  const API_BASE = (import.meta.env as any).VITE_API_URL || "https://backend.glancery.com";
 
   async function sendOtp(email: string): Promise<SendOtpResult> {
     setLoading(true);
