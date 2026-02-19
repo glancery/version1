@@ -828,7 +828,7 @@ const Dashboard = () => {
   // Falls back to a generic /glance path when values are missing.
   const publicationName = store.getState()?.auth?.publication || "glancery";
   const shareUrl = sharedGcode
-    ? `${window.location.origin}/${encodeURIComponent(publicationName)}/${encodeURIComponent(
+    ? `${encodeURIComponent(publicationName)}.glancery.com/p/${encodeURIComponent(
         sharedGcode
       )}`
     : `${window.location.origin}/glance`;

@@ -233,9 +233,9 @@ const Glance = () => {
                     publication={publication || undefined}
                     shareUrl={
                       typeof window !== "undefined" && glance && glance.gcode
-                        ? `${window.location.origin}/${encodeURIComponent(
+                        ? `${encodeURIComponent(
                             publication || "glancery"
-                          )}/${encodeURIComponent(String(glance.gcode))}`
+                          )}.glancery.com/p/${encodeURIComponent(String(glance.gcode))}`
                         : undefined
                     }
                 />
