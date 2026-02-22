@@ -19,7 +19,7 @@ export default function useFollowers(): Result {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const fetchFollowers = useCallback(async (icode: string, path = "https://backend.glancery.com/api/v1/user/followers") => {
+  const fetchFollowers = useCallback(async (icode: string, path = "https://open.glancery.com/api/v1/user/followers") => {
     setError(null);
     setSuccess(false);
     if (!icode) {

@@ -192,7 +192,6 @@ const Glance = () => {
       });
   }
 
-
   return (
     <div className="min-h-screen bg-background pb-8 sm:pb-12">
       {/* If publication exists and is not the default 'Glancery', show it specially */}
@@ -227,17 +226,17 @@ const Glance = () => {
                   image={glance.image || ""}
                   title={glance.headline || ""}
                   description={glance.snippet || ""}
-                    gcode={glance.gcode}
+                  gcode={glance.gcode}
                   cta={glance.cta}
                   link={glance.link}
-                    publication={publication || undefined}
-                    shareUrl={
-                      typeof window !== "undefined" && glance && glance.gcode
-                        ? `https://${encodeURIComponent(
-                            publication || "glancery"
-                          )}.glancery.com/p/${encodeURIComponent(String(glance.gcode))}`
-                        : undefined
-                    }
+                  publication={publication || undefined}
+                  shareUrl={
+                    typeof window !== "undefined" && glance && glance.gcode
+                      ? `https://open.glancery.com/p/${encodeURIComponent(
+                          publication
+                        )}/${encodeURIComponent(String(glance.gcode))}`
+                      : undefined
+                  }
                 />
               </div>
               <div className="mt-4 lg:mt-0 lg:max-h-full lg:overflow-y-auto scrollbar-thin">

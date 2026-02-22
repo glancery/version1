@@ -13,7 +13,7 @@ export default function useList() {
   const [drafts, setDrafts] = useState<any[] | null>(null);
 
   const API_BASE =
-    (import.meta.env as any).VITE_API_URL || "https://backend.glancery.com";
+    (import.meta.env as any).VITE_API_URL || "https://open.glancery.com";
 
   const fetchList = useCallback(
     async (icodeArg?: string): Promise<ListResult> => {

@@ -16,7 +16,7 @@ export default function useSendMail(defaultPath = "/api/v1/glance/unlock") {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const API_BASE = (import.meta.env as any).VITE_API_URL || "https://backend.glancery.com";
+  const API_BASE = (import.meta.env as any).VITE_API_URL || "https://open.glancery.com";
 
   async function sendMail(body: any, path?: string): Promise<SendResult> {
     setLoading(true);

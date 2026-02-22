@@ -12,7 +12,7 @@ export default function useCreate() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
 
-  const API_BASE = (import.meta.env as any).VITE_API_URL || "https://backend.glancery.com";
+  const API_BASE = (import.meta.env as any).VITE_API_URL || "https://open.glancery.com";
 
   /**
    * createGlance

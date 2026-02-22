@@ -13,7 +13,7 @@ export default function useGlance(initialGcode?: string) {
 	const [glance, setGlance] = useState<any | null>(null);
 
 	const API_BASE =
-		(import.meta.env as any).VITE_API_URL || "https://backend.glancery.com";
+		(import.meta.env as any).VITE_API_URL || "https://open.glancery.com";
 
 	const fetchGlance = useCallback(
 		async (gcodeArg?: string): Promise<GetResult> => {
