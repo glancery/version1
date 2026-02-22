@@ -38,7 +38,7 @@ export default function useCreate() {
       if (data.headline) form.append("headline", String(data.headline));
       if (data.snippet) form.append("snippet", String(data.snippet));
       if (data.cta) form.append("cta", String(data.cta));
-      if (data.cta) form.append("link", String(data.link));
+      if (data.link) form.append("link", String(data.link));
       // q1, q2, q3 are objects — stringify them if present
       if (data.q1) form.append("q1", JSON.stringify(data.q1));
       if (data.q2) form.append("q2", JSON.stringify(data.q2));
