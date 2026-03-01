@@ -8,6 +8,8 @@ import useListDraft from "@/hooks/useListDraft";
 import useFollowers from "@/hooks/useFollowers";
 import store from "@/redux/store";
 import useEdit from "@/hooks/useEdit";
+import useDraft from "@/hooks/useDraft";
+
 import useSubscriber from "@/hooks/useSubscriber";
 import {
   Eye,
@@ -419,12 +421,14 @@ const DraftPostCard = ({
   image,
   title,
   navigate,
+  onDelete,
 }: {
   id: string;
   gcode?: string;
   image: string;
   title: string;
   navigate: (path: string) => void;
+  onDelete?: (id: string, title: string) => void;
 }) => {
   return (
     <article className="card-post overflow-hidden">
@@ -439,14 +443,21 @@ const DraftPostCard = ({
         </h2>
       </div>
 
-      {/* Action Button - Only Edit */}
-      <div className="p-4">
+      {/* Action Buttons - Edit + Delete */}
+      <div className="p-4 flex gap-3">
         <button
           onClick={() => navigate(`/draft/${gcode || id}`)}
-          className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-primary text-primary-foreground rounded-lg font-medium text-sm hover:bg-primary/90 transition-colors"
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-primary text-primary-foreground rounded-lg font-medium text-sm hover:bg-primary/90 transition-colors"
         >
           <Pencil className="w-4 h-4" />
           Edit
+        </button>
+        <button
+          onClick={() => onDelete && onDelete(gcode || id, title)}
+          className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 bg-destructive text-destructive-foreground rounded-lg font-medium text-sm hover:bg-destructive/90 transition-colors"
+        >
+          <Trash2 className="w-4 h-4" />
+          Delete
         </button>
       </div>
     </article>
@@ -542,9 +553,11 @@ const GlancesView = ({
 const DraftsView = ({
   navigate,
   isEmpty,
+  onDelete,
 }: {
   navigate: (path: string) => void;
   isEmpty: boolean;
+  onDelete?: (id: string, title: string) => void;
 }) => {
   return (
     <div className="min-h-screen bg-background pb-24">
@@ -593,6 +606,7 @@ const DraftsView = ({
                   image={post.image}
                   title={post.title}
                   navigate={navigate}
+                  onDelete={onDelete}
                 />
               ))}
             </div>
@@ -656,11 +670,13 @@ const Dashboard = () => {
   const [deleteTarget, setDeleteTarget] = useState<{
     id: string;
     title: string;
+    kind: "glance" | "draft";
   } | null>(null);
   const { toast } = useToast();
 
   // Edit/delete hook
   const { deleteGlance, loading: editLoading, error: editError } = useEdit();
+  const { deleteDraft, loading: editLoad, error: editErr } = useDraft();
 
   // Hook to fetch glances
   const {
@@ -866,7 +882,7 @@ const Dashboard = () => {
   }, [sharedGcode, sendStats]);
 
   const handleDeleteClick = (id: string, title: string) => {
-    setDeleteTarget({ id, title });
+    setDeleteTarget({ id, title, kind: "glance" });
     setDeleteDialogOpen(true);
   };
 
@@ -914,6 +930,68 @@ const Dashboard = () => {
         description: err?.message || "Network error",
         variant: "destructive",
       });
+    }
+  };
+
+  const handleConfirmDeleteDraft = async () => {
+    if (!deleteTarget) return;
+
+    const dcode = deleteTarget.id;
+    const icode = store.getState()?.auth?.icode;
+
+    // Inform user deletion started
+    toast({
+      title: "Deleting...",
+      description: `Deleting "${deleteTarget.title}"`,
+    });
+
+    try {
+      const res = await deleteDraft({ dcode, icode });
+      if (res.success) {
+        toast({
+          title: "Draft deleted",
+          description: `"${deleteTarget.title}" has been deleted.`,
+        });
+        setDeleteDialogOpen(false);
+        setDeleteTarget(null);
+
+        // Refresh the drafts list for current icode so UI reflects deletion
+        try {
+          if (icode) await fetchDrafts(icode);
+          else await fetchDrafts();
+        } catch (e) {
+          // fetchDrafts will set its own error; ensure UI re-renders anyway
+          // eslint-disable-next-line no-console
+          console.error("Error refetching drafts after delete:", e);
+        }
+      } else {
+        toast({
+          title: "Delete failed",
+          description: res.message || "Failed to delete draft",
+          variant: "destructive",
+        });
+      }
+    } catch (err: any) {
+      toast({
+        title: "Delete failed",
+        description: err?.message || "Network error",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteDraft = (id: string, title: string) => {
+    // open the shared delete dialog for drafts
+    setDeleteTarget({ id, title, kind: "draft" });
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDialogConfirm = async () => {
+    if (!deleteTarget) return;
+    if (deleteTarget.kind === "glance") {
+      await handleConfirmDelete();
+    } else {
+      await handleConfirmDeleteDraft();
     }
   };
 
@@ -998,6 +1076,7 @@ const Dashboard = () => {
           navigate={navigate}
           // showEmptyState can be toggled by dev double-click; treat draftsData empty as empty
           isEmpty={showEmptyState || draftsData.length === 0}
+          onDelete={handleDeleteDraft}
         />
       )}
       {activeTab === "subscribers" && <SubscribersView />}
@@ -1158,16 +1237,19 @@ const Dashboard = () => {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete this glance?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {deleteTarget?.kind === "draft" ? "Delete this draft?" : "Delete this glance?"}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete "{deleteTarget?.title}". This action
-              cannot be undone.
+              {deleteTarget?.kind === "draft"
+                ? `This will permanently delete "${deleteTarget?.title}" (draft). This action cannot be undone.`
+                : `This will permanently delete "${deleteTarget?.title}". This action cannot be undone.`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleConfirmDelete}
+              onClick={handleDialogConfirm}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
